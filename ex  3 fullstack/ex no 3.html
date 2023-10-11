@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microblogging App</title>
+    <style>
+ body {
+            background-image: url('https://cdn.pixabay.com/photo/2018/04/28/22/03/tree-3358468_1280.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+        /* Basic reset for margin and padding */
+body, h1, h2, p, button {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+header {
+    background-color: #4ba0b9;
+    font-size: 40px;
+    font-family: "Audiowide", sans-serif;
+    color: rgb(63, 150, 12);
+    text-align: center;
+    padding: 1rem;
+
+}
+header {
+    background-color: #1997a0;
+    font-size: 40px;
+    font-family: "Audiowide", sans-serif;
+    color: rgb(5, 8, 4);
+    text-align: center;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+header img {
+    margin-right: 10px;
+}
+
+
+#post-form {
+    background-color: white(153, 50, 50);
+    border-bottom: 0px solid #ddd;
+    padding: 1rem;
+    width: 500px;
+    margin-top: 250px;
+    margin-left: 500px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+textarea {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #555;
+}
+
+#posts {
+    background-color: rgb(175, 142, 142);
+    padding: 1rem;
+}
+
+.post {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 1rem;
+    margin-bottom: 1rem;
+   
+}
+
+.like-button, .dislike-button {
+    padding: 0.3rem 0.6rem;
+    background-color: #080707;
+    color: #0c9e2c;
+    border: none;
+    cursor: pointer;
+    margin-right: 0.5rem;
+}
+
+.likes-count, .dislikes-count {
+    margin-top: 0.5rem;
+    color: #3ad314;
+}
+
+    </style>
+</head>
+</head>
+<body>
+    <header>
+        <img src="https://plus.unsplash.com/premium_photo-1671679269810-63dd9438ca81?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fGxldHRlciUyMHN8ZW58MHx8MHx8fDA%3D&w=1000&q=80" alt="" width="100" height="100">
+    </header>
+   
+
+    </div>
+     
+    <section id="post-form">
+        <h2>blogg</h2>
+        <form id="new-post-form">
+            <textarea id="post-content" placeholder="Write your post here"></textarea>
+            <button type="submit">Post Text</button>
+        </form>
+        <form id="new-image-form">
+            <input type="file" id="image-file" accept="image/*">
+            <button type="submit">Post Image</button>
+        </form>
+    </section>
+   
+    <section id="text-posts">
+       
+        <!-- New text posts will be added here using JavaScript -->
+    </section>
+   
+    <section id="image-posts">
+       
+        <!-- New image posts will be added here using JavaScript -->
+    </section>
+   
+    <script>
+        const textForm = document.getElementById('new-post-form');
+        const imageForm = document.getElementById('new-image-form');
+        const textPostsSection = document.getElementById('text-posts');
+        const imagePostsSection = document.getElementById('image-posts');
+       
+        textForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+           
+            const postContent = document.getElementById('post-content').value;
+           
+            if (postContent.trim() !== '') {
+                const postElement = createPostElement(postContent);
+                textPostsSection.appendChild(postElement);
+                clearForm('post-content');
+            }
+        });
+       
+        imageForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+           
+            const imageFileInput = document.getElementById('image-file');
+            const imageFile = imageFileInput.files[0];
+           
+            if (imageFile) {
+                const imageUrl = URL.createObjectURL(imageFile);
+                const postElement = createImagePostElement(imageUrl, imageFile.name);
+                imagePostsSection.appendChild(postElement);
+                imageFileInput.value = null;
+            }
+        });
+       
+        function createPostElement(content) {
+            const postElement = document.createElement('div');
+            postElement.classList.add('post', 'text-post');
+            postElement.innerHTML = `
+                <p>Posted: ${new Date().toLocaleString()}</p>
+                <p>${content}</p>
+                <button class="like-button">Like</button>
+                <button class="dislike-button">Dislike</button>
+                <button class="comment-button">Comment</button>
+                <button class="delete-button">Delete</button>
+                <p class="likes-count">Likes: 0</p>
+                <p class="dislikes-count">Dislikes: 0</p>
+                <div class="comments-section"></div>
+            `;
+           
+            addCommonEventListeners(postElement);
+           
+            return postElement;
+        }
+       
+        function createImagePostElement(imageUrl, imageName) {
+            const postElement = document.createElement('div');
+            postElement.classList.add('post', 'image-post');
+            postElement.innerHTML = `
+                <p>Posted: ${new Date().toLocaleString()}</p>
+                <img src="${imageUrl}" alt="Post Image" width="300">
+                <button class="like-button">Like</button>
+                <button class="dislike-button">Dislike</button>
+                <button class="comment-button">Comment</button>
+                <button class="delete-button">Delete</button>
+                <p class="likes-count">Likes: 0</p>
+                <p class="dislikes-count">Dislikes: 0</p>
+                <div class="comments-section"></div>
+            `;
+           
+            addCommonEventListeners(postElement);
+           
+            return postElement;
+        }
+       
+        function addCommonEventListeners(postElement) {
+            const likeButton = postElement.querySelector('.like-button');
+            const dislikeButton = postElement.querySelector('.dislike-button');
+            const commentButton = postElement.querySelector('.comment-button');
+            const deleteButton = postElement.querySelector('.delete-button');
+            const likesCount = postElement.querySelector('.likes-count');
+            const dislikesCount = postElement.querySelector('.dislikes-count');
+            const commentsSection = postElement.querySelector('.comments-section');
+           
+            let likes = 0;
+            let dislikes = 0;
+           
+            likeButton.addEventListener('click', function() {
+                likes++;
+                updateLikesDislikes();
+            });
+           
+            dislikeButton.addEventListener('click', function() {
+                dislikes++;
+                updateLikesDislikes();
+            });
+           
+            commentButton.addEventListener('click', function() {
+                const commentInput = document.createElement('input');
+                commentInput.type = 'text';
+                commentInput.placeholder = 'Write a comment...';
+                const commentSubmit = document.createElement('button');
+                commentSubmit.textContent = 'Submit';
+                commentSubmit.addEventListener('click', function() {
+                    if (commentInput.value.trim() !== '') {
+                        const commentElement = document.createElement('p');
+                        commentElement.textContent = commentInput.value;
+                        commentsSection.appendChild(commentElement);
+                        commentInput.value = '';
+                    }
+                });
+                commentsSection.appendChild(commentInput);
+                commentsSection.appendChild(commentSubmit);
+            });
+           
+            deleteButton.addEventListener('click', function() {
+                postElement.parentElement.removeChild(postElement);
+            });
+           
+            function updateLikesDislikes() {
+                likesCount.textContent = `Likes: ${likes}`;
+                dislikesCount.textContent = `Dislikes: ${dislikes}`;
+            }
+        }
+       
+        function clearForm(inputId) {
+            document.getElementById(inputId).value = '';
+        }
+    </script>
+    </body>
+    </html>
